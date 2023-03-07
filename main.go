@@ -13,14 +13,14 @@ import (
 )
 
 // $BPF_CLANG and $BPF_CFLAGS are set by the Makefile.
-//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc $BPF_CLANG -cflags $BPF_CFLAGS bpf kprobe.c -- -I./headers
+//go:generate go run github.com/cilium/ebpf/cmd/bpf2go -cc $BPF_CLANG -cflags $BPF_CFLAGS --target=amd64 bpf kprobe.c -- -I./headers
 
 const mapKey uint32 = 0
 
 func main() {
 
 	// Name of the kernel function to trace.
-	fn := "sys_execve"
+	fn := "do_sys_openat2"
 
 	// Allow the current process to lock memory for eBPF resources.
 	if err := rlimit.RemoveMemlock(); err != nil {
@@ -38,7 +38,7 @@ func main() {
 	// pre-compiled program. Each time the kernel function enters, the program
 	// will increment the execution counter by 1. The read loop below polls this
 	// map value once per second.
-	kp, err := link.Kprobe(fn, objs.KprobeExecve, nil)
+	kp, err := link.Kprobe(fn, objs.KprobeOpenat2, nil)
 	if err != nil {
 		log.Fatalf("opening kprobe: %s", err)
 	}
