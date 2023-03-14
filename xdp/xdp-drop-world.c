@@ -1,11 +1,11 @@
+//go:build ignore
+
 #include "common.h"
 
-#define SEC(NAME) __attribute__((section(NAME), used))
+char __license[] SEC("license") = "Dual MIT/GPL";
 
 SEC("xdp")
-int xdp_drop_the_world(struct xdp_md *ctx) {
+int xdp_prog_func(struct xdp_md *ctx) {
     // drop everything
     return XDP_DROP;
 }
-
-char _license[] SEC("license") = "GPL";
